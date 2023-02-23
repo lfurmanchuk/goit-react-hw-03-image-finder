@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 // import { ToastContainer, toast } from 'react-toastify';
-import { ImageGallery } from './ImageGallery/ImageGallery';
 import { SearchbarForm } from './Searchbar/Searchbar';
+import { Loader } from './Loader/Loader';
+import { ImageGallery } from './ImageGallery/ImageGallery';
 import { Button } from './Button/Button';
 import { getImages } from './Servise/Api';
 import css from './App.module.css';
@@ -89,11 +90,12 @@ export class App extends Component {
   };
 
   render() {
-    const { images, visibleBtn, page, totalPages } = this.state;
+    const { images, loading, visibleBtn, page, totalPages } = this.state;
 
     return (
       <div className={css.App}>
         <SearchbarForm onSubmit={this.onSubmitForm} />
+        {loading && <Loader />}
         <ImageGallery images={images} onSelected={this.onSelectedImage} />
         {visibleBtn && (
           <Button
