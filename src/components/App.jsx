@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 // import { ToastContainer, toast } from 'react-toastify';
 import { ImageGallery } from './ImageGallery/ImageGallery';
 import { SearchbarForm } from './Searchbar/Searchbar';
+import { Button } from './Button/Button';
 import { getImages } from './Servise/Api';
 import css from './App.module.css';
 
@@ -19,6 +20,7 @@ export class App extends Component {
     totalPages: 0,
   };
 
+  // Виклик методу оновлення компоненту
   async componentDidUpdate(_, prevState) {
     const { imageName, page } = this.state;
     const { PER_PAGE } = this.props;
@@ -76,17 +78,30 @@ export class App extends Component {
     }
   };
 
+  // Завантаження у модальне вікно великого зображення
   onSelectedImage = ({ largeImageURL, tags }) => {
     this.setState({ largeImg: largeImageURL, tags });
   };
 
+  // Зантаження додаткової сторінки до галареї
+  onLoadMore = () => {
+    this.setState(prevState => ({ page: prevState.page + 1 }));
+  };
+
   render() {
-    const { images } = this.state;
+    const { images, visibleBtn, page, totalPages } = this.state;
 
     return (
       <div className={css.App}>
         <SearchbarForm onSubmit={this.onSubmitForm} />
         <ImageGallery images={images} onSelected={this.onSelectedImage} />
+        {visibleBtn && (
+          <Button
+            onLoadMore={this.onLoadMore}
+            page={page}
+            totalPages={totalPages}
+          />
+        )}
         {/* <ToastContainer autoClose={3000} /> */}
       </div>
     );
