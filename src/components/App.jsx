@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
-// import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { SearchbarForm } from './Searchbar/Searchbar';
 import { Loader } from './Loader/Loader';
 import { ImageGallery } from './ImageGallery/ImageGallery';
 import { Button } from './Button/Button';
+import { Modal } from './Modal/Modal';
 import { getImages } from './Servise/Api';
 import css from './App.module.css';
 
@@ -40,8 +42,7 @@ export class App extends Component {
       }));
 
       if (page === 1) {
-        // toast.success(`Hooray! We found ${totalHits} images`);
-        alert(`Hooray! We found ${totalHits} images`);
+        toast.success(`Hooray! We found ${totalHits} images`);
         window.scroll(0, 0);
       }
 
@@ -54,10 +55,7 @@ export class App extends Component {
 
       if (page >= countPages) {
         this.setState({ visibleBtn: false });
-        // toast.info(
-        //   `We're sorry, but you've reached the end of search "${imageName}". Please start a new search`
-        // );
-        alert(
+        toast.info(
           `We're sorry, but you've reached the end of search "${imageName}". Please start a new search`
         );
       }
@@ -74,8 +72,7 @@ export class App extends Component {
         totalPages: 0,
       });
     } else {
-      // toast.warn('The new search must be different from the current search');
-      alert('The new search must be different from the current search');
+      toast.warn('The new search must be different from the current search');
     }
   };
 
@@ -89,8 +86,20 @@ export class App extends Component {
     this.setState(prevState => ({ page: prevState.page + 1 }));
   };
 
+  onCloseByEscape = () => {
+    this.setState({ largeImg: '' });
+  };
+
+  onCloseByClick = e => {
+    const clickBackdrop = e.target.id;
+    if (clickBackdrop === 'backdrop') {
+      this.setState({ largeImg: '' });
+    }
+  };
+
   render() {
-    const { images, loading, visibleBtn, page, totalPages } = this.state;
+    const { images, loading, visibleBtn, page, totalPages, largeImg, tags } =
+      this.state;
 
     return (
       <div className={css.App}>
@@ -104,15 +113,16 @@ export class App extends Component {
             totalPages={totalPages}
           />
         )}
-        {/* <ToastContainer autoClose={3000} /> */}
+        {largeImg && (
+          <Modal
+            largeImg={largeImg}
+            tags={tags}
+            onCloseByClick={this.onCloseByClick}
+            onCloseByEscape={this.onCloseByEscape}
+          />
+        )}
+        <ToastContainer autoClose={3000} />
       </div>
     );
   }
 }
-
-/* {this.state.loading && <h2>Loading...</h2>}
-        {this.state.image && (
-          <div>
-            <img src="{this.state.image.webformatURL}" alt="img" />
-          </div>
-        )} */
