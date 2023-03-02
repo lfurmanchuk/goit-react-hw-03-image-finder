@@ -4,17 +4,20 @@ import { toast } from 'react-toastify';
 import css from './Searchbar.module.css';
 
 export class SearchbarForm extends Component {
+  // Стейт форми з початковим пустим значенням
   state = { imageName: '' };
 
+  // Метод, що спостерігає за інпутами і записує в state їх значення
   handleChangeInput = e => {
     this.setState({ imageName: e.currentTarget.value.toLowerCase() });
   };
 
+  // Метод на відправці форми, що формує зі state контакт і передає до зовнішного методу
   handleSubmitForm = e => {
     const { imageName } = this.state;
 
     e.preventDefault();
-    if (imageName.trim() === '' || imageName.length < 3) {
+    if (imageName.trim() === '' || imageName.length < 2) {
       toast.warning('Search field is empty!');
       this.resetForm();
       return;
@@ -23,6 +26,7 @@ export class SearchbarForm extends Component {
     this.resetForm();
   };
 
+  // Очищення полів форми після відправки
   resetForm = () => this.setState({ imageName: '' });
 
   render() {
@@ -50,53 +54,3 @@ export class SearchbarForm extends Component {
 SearchbarForm.propTypes = {
   onSubmit: PropTypes.func,
 };
-
-// export class SearchbarForm extends Component {
-//   // Запис state початкового стану
-//   state = {
-//     searchRequest: '',
-//     images: [],
-//     galleryPage: 1,
-//     error: null,
-//   };
-
-//   handleRequestChange = event => {
-//     this.setState({ searchRequest: event.currentTarget.value.toLowerCase() });
-//   };
-
-//   handelSubmite = event => {
-//     event.preventDefault();
-
-//     if (this.state.searchRequest.trim() === '') {
-//       // не працює
-//       //   toast.error('Search field is empty!');
-//       alert('Search field is empty!');
-//       return;
-//     }
-
-//     this.props.onSubmit(this.state.searchRequest);
-//     this.setState({ searchRequest: '' });
-//   };
-
-//   render() {
-//     return (
-//       <header className={style.Searchbar}>
-//         <form className={style.SearchForm} onSubmit={this.handelSubmite}>
-//           <button type="submit" className={style.SearchForm_button}>
-//             <span className={style.SearchForm_button_label}>Search</span>
-//           </button>
-
-//           <input
-//             className={style.SearchForm_input}
-//             type="text"
-//             autoComplete="off"
-//             autoFocus
-//             placeholder="Search images and photos"
-//             value={this.state.searchRequest}
-//             onChange={this.handleRequestChange}
-//           />
-//         </form>
-//       </header>
-//     );
-//   }
-// }

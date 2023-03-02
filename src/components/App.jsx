@@ -20,44 +20,37 @@ export class App extends Component {
     largeImg: '',
     tags: '',
     page: 1,
-    totalPages: 0,
+    error: null,
   };
 
   // Виклик методу оновлення компоненту
   async componentDidUpdate(_, prevState) {
     const { imageName, page } = this.state;
-    const { PER_PAGE } = this.props;
 
     if (prevState.imageName !== imageName || prevState.page !== page) {
-      this.setState({ loading: true });
+      try {
+        this.setState({ loading: true });
+        const data = await getImages(imageName, page);
+        const { hits, totalHits } = data;
 
-      const data = await getImages(imageName, page, PER_PAGE).finally(() =>
-        this.setState({ loading: false })
-      );
+        if (!hits.length) {
+          toast.error(`We can't found ${imageName}`);
+        }
 
-      const { hits, totalHits } = data;
+        if (totalHits !== 0) {
+          this.setState({ visibleBtn: true });
+        }
 
-      this.setState(({ images }) => ({
-        images: [...images, ...hits],
-      }));
-
-      if (page === 1) {
-        toast.success(`Hooray! We found ${totalHits} images`);
-        window.scroll(0, 0);
-      }
-
-      if (totalHits !== 0) {
-        this.setState({ visibleBtn: true });
-      }
-
-      const countPages = Math.ceil(totalHits / PER_PAGE);
-      this.setState({ totalPages: countPages });
-
-      if (page >= countPages) {
-        this.setState({ visibleBtn: false });
-        toast.info(
-          `We're sorry, but you've reached the end of search "${imageName}". Please start a new search`
+        // Запис в state результатів пошуку
+        this.setState(({ images }) => ({
+          images: [...images, ...hits],
+        }));
+      } catch (error) {
+        toast.error(
+          `Something is wrong, try to reload page! Error: ${error.message}`
         );
+      } finally {
+        this.setState({ loading: false });
       }
     }
   }
@@ -86,10 +79,12 @@ export class App extends Component {
     this.setState(prevState => ({ page: prevState.page + 1 }));
   };
 
+  // Закриття модалки по Escape
   onCloseByEscape = () => {
     this.setState({ largeImg: '' });
   };
 
+  // Закриття модалки по кліку
   onCloseByClick = e => {
     const clickBackdrop = e.target.id;
     if (clickBackdrop === 'backdrop') {

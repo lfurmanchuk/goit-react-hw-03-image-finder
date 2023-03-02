@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import css from './ImageGallery.module.css';
 
+// Побудова li і img, експорт картки в галерею
 export const Item = ({ webformatURL, largeImageURL, tags, onSelected }) => {
   return (
     <li className={css.ImageGalleryItem}>
