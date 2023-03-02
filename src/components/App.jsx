@@ -10,8 +10,6 @@ import { getImages } from './Servise/Api';
 import css from './App.module.css';
 
 export class App extends Component {
-  static defaultProps = { PER_PAGE: 12 };
-
   state = {
     imageName: '',
     images: [],
@@ -46,9 +44,8 @@ export class App extends Component {
           images: [...images, ...hits],
         }));
       } catch (error) {
-        toast.error(
-          `Something is wrong, try to reload page! Error: ${error.message}`
-        );
+        const message = 'Oops, something went wrong ...';
+        this.setState({ error: message });
       } finally {
         this.setState({ loading: false });
       }
@@ -64,8 +61,6 @@ export class App extends Component {
         page: 1,
         totalPages: 0,
       });
-    } else {
-      toast.warn('The new search must be different from the current search');
     }
   };
 
@@ -74,7 +69,7 @@ export class App extends Component {
     this.setState({ largeImg: largeImageURL, tags });
   };
 
-  // Зантаження додаткової сторінки до галареї
+  // Завантаження додаткової сторінки до галареї
   onLoadMore = () => {
     this.setState(prevState => ({ page: prevState.page + 1 }));
   };
