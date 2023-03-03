@@ -19,6 +19,7 @@ export class App extends Component {
     tags: '',
     page: 1,
     error: null,
+    totalPages: 0,
   };
 
   // Виклик методу оновлення компоненту
@@ -39,6 +40,10 @@ export class App extends Component {
           this.setState({ visibleBtn: true });
         }
 
+        if (page >= Math.ceil(totalHits / 12)) {
+          this.setState({ visibleBtn: false });
+          toast.info(`It's all! Please start a new search`);
+        }
         // Запис в state результатів пошуку
         this.setState(({ images }) => ({
           images: [...images, ...hits],
